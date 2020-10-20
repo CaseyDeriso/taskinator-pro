@@ -41,14 +41,14 @@ var saveTasks = function () {
   localStorage.setItem("tasks", JSON.stringify(tasks));
 };
 
+// list group was clicked, replace with text input to edit task description 
 $(".list-group").on("click", "p", function () {
   let text = $(this).text().trim();
   let textInput = $("<textarea>").addClass("form-control").val(text);
-  console.log(textInput.val);
   $(this).replaceWith(textInput);
   textInput.trigger("focus");
 });
-
+//  user clicked off list group, save the edit and replace with P element
 $(".list-group").on("blur", "textarea", function () {
   // get the textarea's current value/text
   var text = $(this).val().trim();
@@ -67,6 +67,49 @@ $(".list-group").on("blur", "textarea", function () {
   // replace text area with p element
   $(this).replaceWith(taskP);
 });
+// revert back to the updated P element
+$(".list-group").on("blur", "input[type='text']", function() {
+  // ger current text
+  let date = $(this)
+    .val()
+    .trim();
+  // get the parent ul's id attribute
+  let status = $(this)
+    .closest(".list-group")
+    .attr("id")
+    .replace("list", "");
+  // get the task's position in the list of other li elements
+  let index = $(this)
+    .closest(".list-group")
+    .index();
+  // update task in array and re-save localstorage
+  let taskSpan = $("<span>")
+    .addClass("badge badge-primary badge-pill")
+    .text(date);
+  // replace input with span element
+  $(this).replaceWith(taskSpan);
+})
+
+// due date was clicked
+$(".list-group").on("click", "span", function() {
+  // get current text
+  let date = $(this)
+    .text()
+    .trim();
+
+  // create new input element
+  var dateInput = $("<input>")
+    .attr("type", "text")
+    .addClass("form-control")
+    .val(date);
+
+  // swap out elements
+  $(this).replaceWith(dateInput);
+
+  // automatically focus on new element
+  dateInput.trigger("focus");
+});
+
 
 // modal was triggered
 $("#task-form-modal").on("show.bs.modal", function () {
